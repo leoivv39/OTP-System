@@ -1,0 +1,104 @@
+html {
+    min-height: 100%;
+    background: #6a11cb;
+    background: -webkit-linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
+    background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1))
+}
+
+.loading-spinner {
+    border: 4px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 4px solid #3498db;
+    width: 40px;
+    height: 40px;
+    animation: spin 2s linear infinite;
+  }
+  
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+  
+.center-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+}
+
+.form {
+    background-color: rgba(51, 51, 51, 0.8);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+    width: 350px;
+    text-align: center;
+}
+
+.form-group input {
+    background-color: rgb(231, 231, 231);
+    max-width: 300px;
+    color: black;
+}
+
+.form-group label {
+    color: rgb(231, 231, 231);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group-container {
+    margin-bottom: 50px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background-color: #444;
+    color: white;
+    font-size: 16px;
+}
+
+button {    
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background-color: #37b1ff;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}
+
+button:hover {
+    background-color: #2a8dd9;
+}
+
+h2 {
+    color: white;
+    font-size: 24px;
+    margin-bottom: 25px;
+}
+
+.error-message {
+    color: rgba(242, 61, 61, 0.902);
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.success-message {
+    color: rgb(10, 172, 10);
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.form-container {
+    position: relative;
+}

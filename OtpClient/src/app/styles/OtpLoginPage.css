@@ -1,0 +1,12 @@
+.form p {
+    color: white;
+}
+
+.form input {
+    width: 50%;
+    margin-bottom: 50px;
+}
+
+.form button {
+    width: 50%;
+}

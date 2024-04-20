@@ -1,0 +1,19 @@
+.sign-up-text {
+    margin-top: 50px;
+    text-align: center;
+    font-size: 14px;
+    color: #6c757d;
+}
+  
+.sign-up-link {
+    color: #007bff;
+    font-weight: bold;
+    text-decoration: none;
+    margin-left: 5px;
+}
+  
+.sign-up-link:hover {
+    text-decoration: underline;
+    color: #0056b3;
+}
+  
