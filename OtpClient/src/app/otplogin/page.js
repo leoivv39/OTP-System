@@ -41,16 +41,21 @@ export default function OtpLoginPage() {
         if (authContextIsLoading || otpWasGenerated.current) {
           return;
         }
-        const response = await onGenerateOtp(authToken);
-        if (response.status === 201) {
-          toast.info(`Here is your password: ${response.data.otp}`);
-          otpWasGenerated.current = true;
-        } else {
-          toast.error("Something went wrong.");
-        }
+        await fetchOtp();
+        setInterval(async () => await fetchOtp(), 5 * 1000 * 60);
       })
       .catch(console.error);
   }, [authContextIsLoading]);
+
+  const fetchOtp = async () => {
+    const response = await onGenerateOtp(authToken);
+    if (response.status === 201) {
+      toast.info(`Here is your password: ${response.data.otp}`);
+      otpWasGenerated.current = true;
+    } else {
+      toast.error("Something went wrong.");
+    }
+  };
 
   const onSendOtp = async (e) => {
     if (!otp) {
