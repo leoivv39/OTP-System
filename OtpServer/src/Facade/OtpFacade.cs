@@ -1,4 +1,5 @@
 ﻿using OtpServer.Dto;
+using OtpServer.Encryption;
 using OtpServer.Mapper;
 using OtpServer.Mapper.Hash;
 using OtpServer.Otp;
@@ -16,7 +17,8 @@ namespace OtpServer.Facade
         IUserService userService,
         IOtpProvider otpProvider,
         IOtpItemMapper otpItemMapper,
-        IPasswordHasher passwordHasher)
+        IPasswordHasher passwordHasher,
+        IEncryptionHandler encryptionHandler)
         : IOtpFacade
     {
         public async Task<OtpItemDto> GenerateOtpAsync()
@@ -28,7 +30,7 @@ namespace OtpServer.Facade
 
             OtpItem otpItem = otpItemMapper.MapToPendingOtpItem(foundUser, hashedOtp, expirationDate);
             OtpItem savedOtpItem = await otpItemService.AddOtpItemAsync(otpItem);
-            savedOtpItem.Otp = generatedOtp;
+            savedOtpItem.Otp = encryptionHandler.Encrypt(generatedOtp);
             return otpItemMapper.MapToDto(savedOtpItem);
         }
 

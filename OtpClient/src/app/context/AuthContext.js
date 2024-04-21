@@ -5,6 +5,12 @@ import AuthService from "../services/AuthService";
 import { useState } from "react";
 import { useEffect } from "react";
 import Cookies from "js-cookie";
+import EncryptionService from "../services/EncryptionService";
+import configData from "../../../config.json";
+
+const SECRET_KEY = configData.ENCRYPTION_KEY;
+
+const encryptor = new EncryptionService({ secretKey: SECRET_KEY });
 
 const AuthContext = createContext();
 
@@ -27,6 +33,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const onLogin = async (username, password) => {
+    password = encryptor.encrypt(password);
     const response = await AuthService.login(username, password);
     if (response.status != 200) {
       return response;
@@ -39,7 +46,12 @@ export const AuthProvider = ({ children }) => {
   };
 
   const onGenerateOtp = async () => {
-    return await AuthService.generateOtp(authToken);
+    const response = await AuthService.generateOtp(authToken);
+    if (response.status != 201) {
+      return response;
+    }
+    response.data.otp = encryptor.decrypt(response.data.otp);
+    return response;
   };
 
   const onLoginOtp = async (otp) => {
@@ -55,8 +67,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   const saveTokenToCookie = (tokenName, token) => {
+    const hoursToExpire = 2;
     Cookies.set(tokenName, token, {
-      expires: 1,
+      expires: hoursToExpire / 24,
       path: "/",
       sameSite: "strict",
     });
@@ -70,6 +83,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const onRegister = async (username, password, email) => {
+    password = encryptor.encrypt(password);
     return await AuthService.register(username, password, email);
   };
 

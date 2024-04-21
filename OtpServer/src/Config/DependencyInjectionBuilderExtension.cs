@@ -9,6 +9,7 @@ using OtpServer.Mapper.Hash;
 using OtpServer.Otp;
 using OtpServer.Security.Jwt;
 using Microsoft.AspNetCore.Authorization;
+using OtpServer.Encryption;
 using OtpServer.Security.Requirement.Handler;
 
 namespace OtpServer.Config
@@ -33,6 +34,8 @@ namespace OtpServer.Config
             builder.Services.AddScoped<IJwtTokenHandler, JwtTokenHandler>();
             builder.Services.AddScoped<IOtpContext, ConfigurationOtpContext>();
             builder.Services.AddScoped<IOtpProvider, OtpProvider>();
+            builder.Services.AddScoped<IEncryptionContext, ConfigEncryptionContext>();
+            builder.Services.AddScoped<IEncryptionHandler, AesEncryptionHandler>();
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             builder.Services.AddSingleton<IAuthorizationHandler, TokenTypeHandler>();
             builder.Services.AddSingleton(builder.Configuration);

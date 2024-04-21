@@ -9,7 +9,6 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    console.log(authToken);
     if (authToken && otpToken) {
       router.push("/loggedin");
     } else if (authToken) {

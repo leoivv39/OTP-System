@@ -10,6 +10,7 @@ using OtpServer.Security.Jwt;
 using OtpServer.Service;
 using System.Security.Claims;
 using OtpServer.Dto;
+using OtpServer.Encryption;
 using OtpServer.Request;
 
 namespace OtpServer.Tests.Unit.Facade
@@ -24,6 +25,7 @@ namespace OtpServer.Tests.Unit.Facade
         private readonly Mock<IOtpProvider> _otpProviderMock;
         private readonly Mock<IOtpItemMapper> _otpItemMapperMock;
         private readonly Mock<IPasswordHasher> _passwordHasherMock;
+        private readonly Mock<IEncryptionHandler> _encryptionHandler;
 
         public OtpFacadeTest()
         {
@@ -34,6 +36,7 @@ namespace OtpServer.Tests.Unit.Facade
             _otpProviderMock = new Mock<IOtpProvider>();
             _otpItemMapperMock = new Mock<IOtpItemMapper>();
             _passwordHasherMock = new Mock<IPasswordHasher>();
+            _encryptionHandler = new Mock<IEncryptionHandler>();
             _otpFacade = new OtpFacade(
                 _otpItemServiceMock.Object,
                 _httpContextAccessorMock.Object,
@@ -41,7 +44,8 @@ namespace OtpServer.Tests.Unit.Facade
                 _userServiceMock.Object,
                 _otpProviderMock.Object,
                 _otpItemMapperMock.Object,
-                _passwordHasherMock.Object
+                _passwordHasherMock.Object,
+                _encryptionHandler.Object
             );
         }
 
@@ -72,6 +76,9 @@ namespace OtpServer.Tests.Unit.Facade
             var savedOtpItem = new OtpItem();
             _otpItemServiceMock.Setup(service => service.AddOtpItemAsync(otpItem))
                 .ReturnsAsync(savedOtpItem);
+            var encryptedOtp = "encrypted";
+            _encryptionHandler.Setup(handler => handler.Encrypt(otp))
+                .Returns(encryptedOtp);
             var savedOtpItemDto = new OtpItemDto();
             _otpItemMapperMock.Setup(mapper => mapper.MapToDto(savedOtpItem))
                 .Returns(savedOtpItemDto);

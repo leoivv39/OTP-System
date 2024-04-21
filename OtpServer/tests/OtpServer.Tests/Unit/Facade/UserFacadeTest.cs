@@ -1,5 +1,6 @@
 ﻿using Moq;
 using OtpServer.Dto;
+using OtpServer.Encryption;
 using OtpServer.Exception;
 using OtpServer.Facade;
 using OtpServer.Mapper;
@@ -16,13 +17,15 @@ namespace OtpServer.Tests.Unit.Facade
         private readonly Mock<IUserService> _userServiceMock;
         private readonly Mock<IUserMapper> _userMapperMock;
         private readonly Mock<IJwtTokenHandler> _jwtTokenHandlerMock;
+        private readonly Mock<IEncryptionHandler> _encryptionHandlerMock;
 
         public UserFacadeTest()
         {
             _userServiceMock = new Mock<IUserService>();
             _userMapperMock = new Mock<IUserMapper>();
             _jwtTokenHandlerMock = new Mock<IJwtTokenHandler>();
-            _userFacade = new UserFacade(_userServiceMock.Object, _userMapperMock.Object, _jwtTokenHandlerMock.Object);
+            _encryptionHandlerMock = new Mock<IEncryptionHandler>();
+            _userFacade = new UserFacade(_userServiceMock.Object, _userMapperMock.Object, _jwtTokenHandlerMock.Object, _encryptionHandlerMock.Object);
         }
 
         [Fact]
@@ -48,6 +51,9 @@ namespace OtpServer.Tests.Unit.Facade
         public async Task LoginUserAsync_UserNotFound_ThrowsUserNotFoundException()
         {
             var loginRequest = GetMockLoginRequest();
+            var encryptedPassword = "password";
+            _encryptionHandlerMock.Setup(handler => handler.Decrypt(loginRequest.Password))
+                .Returns(encryptedPassword);
             _userServiceMock.Setup(service => service.GetUserByUsernameAndPasswordAsync(loginRequest.Username, loginRequest.Password))
                 .ThrowsAsync(new UserNotFoundException("message"));
 
@@ -60,6 +66,9 @@ namespace OtpServer.Tests.Unit.Facade
             var loginRequest = GetMockLoginRequest();
             var foundUser = GetMockUser();
             var token = "token";
+            var encryptedPassword = "password";
+            _encryptionHandlerMock.Setup(handler => handler.Decrypt(loginRequest.Password))
+                .Returns(encryptedPassword);
             _userServiceMock.Setup(service => service.GetUserByUsernameAndPasswordAsync(loginRequest.Username, loginRequest.Password))
                 .ReturnsAsync(foundUser);
             _jwtTokenHandlerMock.Setup(handler => handler.GenerateJwtToken(foundUser, TokenType.MainLogin))
