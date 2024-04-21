@@ -5,25 +5,16 @@ using OtpServer.Repository.Model;
 
 namespace OtpServer.Service
 {
-    public class OtpItemService : IOtpItemService
+    public class OtpItemService(IOtpItemRepository otpItemRepository, IPasswordHasher passwordHasher) : IOtpItemService
     {
-        private readonly IOtpItemRepository _otpItemRepository;
-        private readonly IPasswordHasher _passwordHasher;
-
-        public OtpItemService(IOtpItemRepository otpItemRepository, IPasswordHasher passwordHasher)
+        public async Task<OtpItem> AddOtpItemAsync(OtpItem otpItem)
         {
-            _otpItemRepository = otpItemRepository;
-            _passwordHasher = passwordHasher;
-        }
-
-        public Task<OtpItem> AddOtpItemAsync(OtpItem otpItem)
-        {
-            return _otpItemRepository.AddAsync(otpItem);
+            return await otpItemRepository.AddAsync(otpItem);
         }
 
         public async Task<OtpItem> GetOtpItemByUserIdAndOtpAsync(int userId, string otp)
         {
-            var otpItems = await _otpItemRepository.GetAllByUserIdAsync(userId);
+            var otpItems = await otpItemRepository.GetAllByUserIdAsync(userId);
             var otpItem = otpItems.FirstOrDefault(otpItem => Matches(otpItem, otp));
             if (otpItem == null)
             {
@@ -42,12 +33,12 @@ namespace OtpServer.Service
 
         public async Task<OtpItem> UpdateOtpItemAsync(OtpItem otpItem)
         {
-            return await _otpItemRepository.UpdateAsync(otpItem);
+            return await otpItemRepository.UpdateAsync(otpItem);
         }
 
         private bool Matches(OtpItem otpItem, string otp)
         {
-            return _passwordHasher.VerifyPassword(otp, otpItem.Otp);
+            return passwordHasher.VerifyPassword(otp, otpItem.Otp);
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using OtpServer.Repository.Model;
-
-namespace OtpServer.Dto
+﻿namespace OtpServer.Dto
 {
     public class OtpItemDto
     {

@@ -14,6 +14,7 @@ namespace OtpServer.Request
 
         [Required(ErrorMessage = "Email is required.")]
         [EmailAddress(ErrorMessage = "Invalid email address.")]
+        [StringLength(20, ErrorMessage = "Email can be at most 20 characters long.")]
         public string Email { get; set; }
     }
 }

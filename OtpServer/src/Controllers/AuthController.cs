@@ -8,18 +8,9 @@ using OtpServer.Controllers.Policy;
 namespace OtpServer.Controllers
 {
     [ApiController]
-    [Route("/api/user")]
-    public class AuthController : ControllerBase, IAuthController
+    [Route("/api/auth")]
+    public class AuthController(IUserFacade userFacade, IOtpFacade otpFacade) : ControllerBase, IAuthController
     {
-        private readonly IUserFacade _userFacade;
-        private readonly IOtpFacade _otpFacade;
-
-        public AuthController(IUserFacade userFacade, IOtpFacade otpFacade)
-        {
-            _userFacade = userFacade;
-            _otpFacade = otpFacade;
-        }
-
         [HttpPost]
         public async Task<ActionResult<UserDto>> RegisterUser([FromBody] CreateUserRequest request)
         {
@@ -27,14 +18,14 @@ namespace OtpServer.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var addedUser = await _userFacade.AddUserAsync(request);
-            return CreatedAtAction(nameof(RegisterUser), addedUser);
+            var addedUser = await userFacade.AddUserAsync(request);
+            return Created(string.Empty, addedUser);
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<string>> LoginUser([FromBody] LoginRequest request)
         {
-            string token = await _userFacade.LoginUserAsync(request);
+            string token = await userFacade.LoginUserAsync(request);
             return Ok(token);
         }
 
@@ -42,19 +33,19 @@ namespace OtpServer.Controllers
         [Authorize(Policy = Policies.MainLoginPolicy)]
         public async Task<ActionResult<OtpItemDto>> GenerateOtp()
         {
-            var otpItemDto = await _otpFacade.GenerateOtpAsync();
-            return CreatedAtAction(nameof(GenerateOtp), otpItemDto);
+            var otpItemDto = await otpFacade.GenerateOtpAsync();
+            return Created(string.Empty, otpItemDto);
         }
 
         [HttpPost("otp/login")]
         [Authorize(Policy = Policies.MainLoginPolicy)]
-        public async Task<ActionResult<string>> LoginUserWithOtp(LoginWithOtpRequest request)
+        public async Task<ActionResult<string>> LoginUserWithOtp([FromBody] LoginWithOtpRequest request)
         {
-            string token = await _otpFacade.LoginUserWithOtpAsync(request);
+            string token = await otpFacade.LoginUserWithOtpAsync(request);
             return Ok(token);
         }
 
-        [HttpPost("otp/only")]
+        [HttpGet("otp/only")]
         [Authorize(Policy = Policies.OtpLoginPolicy)]
         public ActionResult<string> LoggedInWithOtpOnly()
         {

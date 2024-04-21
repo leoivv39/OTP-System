@@ -3,12 +3,8 @@ using OtpServer.Repository.Model;
 
 namespace OtpServer.Repository.Context
 {
-    public class UsersDbContext : DbContext, IDbContext<User>
+    public class UsersDbContext(DbContextOptions<UsersDbContext> options) : DbContext(options), IDbContext<User>
     {
-        public UsersDbContext(DbContextOptions<UsersDbContext> options) : base(options) 
-        { 
-        }
-
         public DbSet<User> Users { get; set; }
 
         public async Task<int> SaveChangesAsync()
